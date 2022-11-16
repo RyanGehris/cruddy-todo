@@ -16,39 +16,28 @@ exports.create = (text, callback) => {
 };
 
 exports.readAll = (callback) => {
-  // var data = [];
-  // fs.readdir(exports.dataDir, (err, files) => {
-  //   if (err) {
-  //     console.log('Error in read all');
-  //   } else {
-  //     files.forEach((file) => {
-  //       var obj = {};
-  //       obj.id = file.split('.')[0];
-  //       obj.text = file.split('.')[0];
-  //       data.push(obj);
-  //     });
-  //     callback(null, data);
-  //   }
-  // });
+  var data = [];
   fs.readdir(exports.dataDir, (err, files) => {
     if (err) {
       console.log('Error in read all');
     } else {
-      let data = _.map(files, (file) => {
-        let id = path.basename(file, '.txt');
-        let filepath = path.join(exports.dataDir, file);
-        return fs.readFileAsync(filepath)
-          .then(fileData => {
-            return {
-              id: id,
-              text: fileData.toString()
-            };
-          });
+      var data = _.map(files, (file) => {
+        var id = path.basename(file, '.txt');
+        var filepath = path.join(exports.dataDir, file);
+        return fs.readFileAsync(filepath).then((fileData) => {
+          return {
+            id: id,
+            text: fileData.toString();
+          };
+        });
       });
       Promise.all(data)
-        .then(item => callback(null, item))
-        .catch(err => callback(err));
+        .then((items) => {
+          callback(null, items);
+        })
+        .catch((err) => callback(err));
     }
+    callback(null, data);
   });
 };
 
